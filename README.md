@@ -1,45 +1,52 @@
 # Sentinel
 
-A safeguards / FPIC red-flag screen for carbon-project due diligence.
-Built as an interview demo for Qatalyst (Singapore).
+A safeguards / social-license screen for the buy-side carbon DD workflow.
 
-**Engine v0.2** — see [`ENGINE.md`](./ENGINE.md) for architecture, test results, and design decisions.
+Sits next to the carbon-accounting stack (registries, VVBs, raters) and covers the surface that stack doesn't touch: Indigenous consent, NGO complaints, and active climate litigation — the headline-risk vector that hits a project *after* its credits have already cleared methodology review, and that lands on the buyer, not the registry.
 
-## What it does
+First-line evaluation, evidence-cited, IC-memo-ready.
 
-Given a carbon project's name + geo-coordinates, Sentinel returns a traffic-light
-scorecard for **social-license risk** in ~3 seconds:
+## What it screens
 
-- Indigenous-territory overlap (Native Land Digital)
-- Adverse multilingual news (GDELT 2.0)
-- Active climate litigation (Sabin Center / curated ledger)
-- NGO + investigative complaints (curated ledger)
-- LLM-synthesized Safeguards section of an IC memo (OpenRouter)
+Given a project name + coordinates, Sentinel returns a traffic-light scorecard in ~3 seconds. Every signal is cited.
+
+- **FPIC overlay** — Indigenous-territory intersection (Native Land Digital)
+- **Adverse press** — multilingual coverage against the project (GDELT 2.0)
+- **Active litigation** — climate cases naming the project or developer (Sabin Center + curated ledger)
+- **NGO + investigative complaints** — Survival International, FIDH, Mongabay, Climate Home (curated ledger)
+- **Safeguards memo paragraph** — synthesized into IC-memo prose with inline citations (OpenRouter / Sonnet 4.6)
+
+Output is shape-stable and appendable to a project file — every field is either a green / amber / red bucket or a cited source URL. Nothing is editorial; the engine never assigns a rating it can't link to evidence.
+
+## Why a separate surface
+
+Carbon-accounting risk has converged. CCP, the methodology-change-and-requantification procedure, and the rater layer (BeZero, Sylvera, Calyx, Renoster) all triangulate the credits themselves. None of them watch the project's standing in its host community.
+
+That's where the next Cordillera Azul / Kariba / NRT story lands. Sentinel is the screen that catches it before the IC vote.
 
 ## Quickstart
 
 ```bash
-cd sentinel
 python -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
-cp .env.example .env
-# Edit .env and add your OPENROUTER_API_KEY
+cp .env.example .env   # add OPENROUTER_API_KEY
 python app.py
 ```
 
-Then open http://127.0.0.1:5099
+http://127.0.0.1:5099
 
-The four pre-loaded sample projects are real:
+Four pre-loaded projects are real:
 
 - **Cordillera Azul REDD+** (Peru, VCS 985) — controversial
-- **Kariba REDD+** (Zimbabwe, VCS 902) — controversial (the South Pole exit story)
+- **Kariba REDD+** (Zimbabwe, VCS 902) — the South Pole exit
 - **Alto Mayo Conservation** (Peru, VCS 934) — contested
 - **Mikoko Pamoja Mangrove** (Kenya, Plan Vivo) — clean control
 
-Click any one to run a live screen. Or expand the "ad-hoc" form and paste
-coordinates from any PDD.
+Or paste any project's name + coordinates from a PDD into the ad-hoc form. Engine fires the same screen either way.
 
-## Architecture
+## Engine
+
+Multi-tier resolver. Every external call has a graceful fallback. Every result is shape-stable. Every input is validated.
 
 ```
 Flask + HTMX + Tailwind  ──▶  ThreadPoolExecutor (3 parallel calls)
@@ -49,14 +56,12 @@ Flask + HTMX + Tailwind  ──▶  ThreadPoolExecutor (3 parallel calls)
                               ──▶ OpenRouter (Sonnet 4.6) — IC-memo synthesis
 ```
 
-No database. No accounts. ~400 lines of Python total. Demonstrates the
-*shape* of the build — the moat in v2 would be the curated ledger
-maintenance, multilingual translation, and Qatalyst workspace integration.
+94 unit + integration tests. 15 live blind screens on previously-unseen projects: zero crashes. Northern Rangelands Trust (Kenya) — not in the curated ledger, never seen by the engine — returned RED 11 with three adverse articles surfaced from cold news inference (Mongabay, Survival International, FIDH).
 
-## Why this, not the other four
+See [`ENGINE.md`](./ENGINE.md) for architecture detail and [`STANDARDS.md`](./STANDARDS.md) for the build standard.
 
-See `../03_elimination_audits.md` for how this idea won across five rounds.
-TL;DR: it fills the social-license gap the carbon-accounting layer
-doesn't cover, it uses entirely free real data sources, and Caroline Guyot's
-own launch quote was about indigenous-community consent — Qatalyst already
-cares but hasn't productized this surface.
+## Where this extends
+
+- Curated ledger maintenance — the moat. Has to be hand-tended, like a credit-research desk.
+- Multilingual press scoring — engine already reads it; the ledger doesn't yet weight it.
+- Workspace integration — project file, audit trail, versioned analyst notes.
