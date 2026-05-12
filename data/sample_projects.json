@@ -1,0 +1,66 @@
+[
+  {
+    "id": "vcs-985",
+    "name": "Cordillera Azul National Park REDD+",
+    "registry": "Verra VCS",
+    "vcs_id": "985",
+    "country": "Peru",
+    "type": "REDD+ (avoided deforestation)",
+    "lat": -7.65,
+    "lng": -76.0,
+    "developer": "CIMA Cordillera Azul",
+    "vintage_range": "2008–present",
+    "tag": "controversial",
+    "cached_territories": [
+      {"name": "Kichwa", "url": "https://native-land.ca/maps/territories/kichwa/"},
+      {"name": "Shawi (Chayahuita)", "url": "https://native-land.ca/maps/territories/shawi/"},
+      {"name": "Shipibo-Konibo", "url": "https://native-land.ca/maps/territories/shipibo-konibo/"}
+    ]
+  },
+  {
+    "id": "vcs-902",
+    "name": "Kariba REDD+",
+    "registry": "Verra VCS",
+    "vcs_id": "902",
+    "country": "Zimbabwe",
+    "type": "REDD+ (avoided deforestation)",
+    "lat": -16.55,
+    "lng": 28.85,
+    "developer": "Carbon Green Investments / South Pole",
+    "vintage_range": "2011–present",
+    "tag": "controversial",
+    "cached_territories": [
+      {"name": "Tonga (BaTonga)", "url": "https://native-land.ca/maps/territories/tonga-zambia-zimbabwe/"}
+    ]
+  },
+  {
+    "id": "vcs-934",
+    "name": "Alto Mayo Conservation Initiative",
+    "registry": "Verra VCS",
+    "vcs_id": "934",
+    "country": "Peru",
+    "type": "REDD+ (avoided deforestation)",
+    "lat": -5.7,
+    "lng": -77.7,
+    "developer": "Conservation International",
+    "vintage_range": "2008–present",
+    "tag": "contested",
+    "cached_territories": [
+      {"name": "Awajún (Aguaruna)", "url": "https://native-land.ca/maps/territories/aguaruna/"}
+    ]
+  },
+  {
+    "id": "vcs-1722",
+    "name": "Mikoko Pamoja Mangrove Restoration",
+    "registry": "Plan Vivo",
+    "vcs_id": "PV-AR-001",
+    "country": "Kenya",
+    "type": "Mangrove restoration (blue carbon)",
+    "lat": -4.39,
+    "lng": 39.51,
+    "developer": "Association for Coastal Ecosystem Services (ACES)",
+    "vintage_range": "2014–present",
+    "tag": "clean",
+    "cached_territories": []
+  }
+]

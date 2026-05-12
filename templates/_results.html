@@ -1,0 +1,311 @@
+{% set color = overall.color %}
+{% set is_adhoc = project.id == 'adhoc' %}
+
+<!-- Quick-compare bar — flip between projects without scrolling back up -->
+<div class="mb-5 bg-white border hairline rounded-full p-1.5 inline-flex flex-wrap gap-1 shadow-sm">
+  <span class="px-3 py-1.5 text-[11px] uppercase tracking-wider font-semibold text-ink-500">Compare:</span>
+  <form hx-post="/assess" hx-target="#results" hx-indicator="#spinner" hx-swap="innerHTML scroll:#results:top" class="contents">
+    <input type="hidden" name="project_id" value="vcs-985" />
+    <button type="submit" class="px-3 py-1.5 rounded-full text-[12px] font-medium {% if project.id == 'vcs-985' %}bg-red-100 text-red-700 ring-1 ring-red-200{% else %}text-ink-700 hover:bg-stone-100{% endif %}">🔴 Cordillera Azul</button>
+  </form>
+  <form hx-post="/assess" hx-target="#results" hx-indicator="#spinner" hx-swap="innerHTML scroll:#results:top" class="contents">
+    <input type="hidden" name="project_id" value="vcs-902" />
+    <button type="submit" class="px-3 py-1.5 rounded-full text-[12px] font-medium {% if project.id == 'vcs-902' %}bg-red-100 text-red-700 ring-1 ring-red-200{% else %}text-ink-700 hover:bg-stone-100{% endif %}">🔴 Kariba</button>
+  </form>
+  <form hx-post="/assess" hx-target="#results" hx-indicator="#spinner" hx-swap="innerHTML scroll:#results:top" class="contents">
+    <input type="hidden" name="project_id" value="vcs-934" />
+    <button type="submit" class="px-3 py-1.5 rounded-full text-[12px] font-medium {% if project.id == 'vcs-934' %}bg-amber-100 text-amber-800 ring-1 ring-amber-200{% else %}text-ink-700 hover:bg-stone-100{% endif %}">🟡 Alto Mayo</button>
+  </form>
+  <form hx-post="/assess" hx-target="#results" hx-indicator="#spinner" hx-swap="innerHTML scroll:#results:top" class="contents">
+    <input type="hidden" name="project_id" value="vcs-1722" />
+    <button type="submit" class="px-3 py-1.5 rounded-full text-[12px] font-medium {% if project.id == 'vcs-1722' %}bg-sage-100 text-forest-800 ring-1 ring-sage-200{% else %}text-ink-700 hover:bg-stone-100{% endif %}">🟢 Mikoko Pamoja</button>
+  </form>
+</div>
+
+<!-- How to read this — plain English explainer that appears with every result -->
+<details class="mb-4 bg-sage-50 border hairline rounded-2xl group" {% if project.id == 'vcs-985' %}open{% endif %}>
+  <summary class="cursor-pointer flex items-center justify-between p-5 list-none">
+    <div class="flex items-center gap-3">
+      <div class="w-7 h-7 rounded-full bg-forest-800 text-white grid place-items-center text-[12px] font-bold">?</div>
+      <div>
+        <div class="font-semibold text-ink-900 text-[14px]">How to read this</div>
+        <div class="text-[12px] text-ink-500">Plain English — what each panel below actually means</div>
+      </div>
+    </div>
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" class="text-ink-500 group-open:rotate-180 transition"><path d="M6 9l6 6 6-6"/></svg>
+  </summary>
+  <div class="px-5 pb-5 pt-1 text-[13px] text-ink-700 leading-relaxed space-y-3 max-w-3xl">
+    <p>The big colored header at the top is the <strong class="text-ink-900">verdict</strong> — 🔴 red / 🟡 amber / 🟢 green rolled up from the seven signals below by a transparent rule (no black-box model). Red ≥ 8, amber 3–7, green &lt; 3.</p>
+    <p>The <strong class="text-ink-900">seven panels below</strong> are the evidence the verdict was built from. Each pulls from a public data source and cites the standard it screens against (ICVCM CCP #5, UNDRIP, ILO 169, Sabin Center, World Bank, TI CPI).</p>
+    <ol class="space-y-1.5 list-decimal list-inside ml-2">
+      <li><strong>Indigenous-territory overlap</strong> — does the project sit on Indigenous land? If yes, the FPIC obligation applies and the analyst pulls consultation records.</li>
+      <li><strong>Adverse media</strong> — has any English-language outlet flagged this project? Article scores as adverse only when a safeguards topic AND an adverse-claim term co-occur (kills "Project secures FPIC" false positives).</li>
+      <li><strong>Active litigation</strong> — is there an open court case naming this project or developer? Sabin Center registry + news inference.</li>
+      <li><strong>NGO complaints</strong> — have CMW, Survival International, Forest Peoples, or Mongabay reported issues?</li>
+      <li><strong>Environmental band</strong> — country-level forest-cover trend (World Bank). RED ≤ −0.3 pp/yr per FAO threshold.</li>
+      <li><strong>Governance band</strong> — TI CPI 2024, anchored to TI's published global average of 43.</li>
+      <li><strong>FPIC procedural checklist</strong> — 4 procedural checks anchored to UN-REDD operational FPIC guidelines: consultation · consent · grievance mechanism · withdrawal protections.</li>
+    </ol>
+    <p>At the bottom, an LLM writes the <strong class="text-ink-900">Safeguards section of an IC memo</strong> from the cited evidence. A grounding sniff flags any term in the output that didn't appear in the evidence. The analyst still makes the call — Sentinel is the screen, not the verdict.</p>
+  </div>
+</details>
+
+<article class="bg-white border hairline rounded-2xl overflow-hidden shadow-[0_24px_64px_-32px_rgba(13,79,61,0.12)]">
+
+  {% if is_adhoc %}
+  <div class="bg-sage-50 border-b hairline px-7 py-3 text-[12px] text-ink-700">
+    <span class="font-semibold text-forest-800">Ad-hoc screen.</span>
+    Live data via GDELT + Google News + OSM. Curated ledger augments inferred signals — results below are computed, not bundled.
+  </div>
+  {% endif %}
+
+  <!-- Verdict header -->
+  <header class="px-8 py-7 border-b hairline flex flex-col md:flex-row md:items-center justify-between gap-5
+    {% if color == 'red' %}bg-red-50{% elif color == 'amber' %}bg-amber-50{% else %}bg-sage-100{% endif %}">
+    <div class="flex-1 min-w-0">
+      <div class="eyebrow text-[10px] font-semibold text-ink-500 mb-2">SAFEGUARDS VERDICT</div>
+      <h3 class="headline text-2xl md:text-3xl font-bold text-ink-900">{{ project.name }}</h3>
+      <div class="text-sm text-ink-500 mt-2">{{ project.type }} · {{ project.country or 'unspecified country' }} · <span class="font-mono text-[12px]">{{ project.lat }}, {{ project.lng }}</span></div>
+    </div>
+    <div class="md:text-right flex md:flex-col items-center md:items-end gap-3 md:gap-1">
+      <div class="text-4xl leading-none">
+        {% if color == 'red' %}🔴{% elif color == 'amber' %}🟡{% else %}🟢{% endif %}
+      </div>
+      <div class="font-bold text-lg {% if color == 'red' %}text-red-700{% elif color == 'amber' %}text-amber-700{% else %}text-forest-800{% endif %}">
+        {{ overall.label }}
+      </div>
+      <div class="font-mono text-[11px] text-ink-500">composite {{ overall.score }} · territory coverage: {{ overall.territory_coverage }}</div>
+    </div>
+  </header>
+
+  <!-- Four panels -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink-100">
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-forest-800"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">01 · INDIGENOUS-TERRITORY OVERLAP</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if territories %}bg-red-100 text-red-700{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {{ territories|length }} hit{% if territories|length != 1 %}s{% endif %}
+        </div>
+      </div>
+      {% if territories %}
+        <ul class="space-y-2.5 text-[14px] text-ink-900">
+          {% for t in territories %}
+            <li class="flex items-start gap-2.5">
+              <span class="inline-block w-1.5 h-1.5 rounded-full bg-red-500 mt-2"></span>
+              <span class="font-medium">{{ t.name }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-[14px] text-ink-500">No Indigenous-territory polygons detected at the supplied coordinates ({{ overall.territory_coverage }} coverage).</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">source: {{ territory.source }}{% if territory.note %} · {{ territory.note }}{% endif %}</div>
+    </section>
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-forest-800"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">02 · ADVERSE MEDIA · 24 MO</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if news.adverse_count %}bg-amber-100 text-amber-800{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {{ news.adverse_count }} adverse / {{ news.total }} total
+        </div>
+      </div>
+      {% if articles %}
+        <ul class="space-y-4 text-[14px]">
+          {% for a in articles[:5] %}
+            <li>
+              <a href="{{ a.url }}" target="_blank" rel="noopener" class="text-ink-900 hover:text-forest-800 hover:underline font-medium leading-snug block">{{ a.title }}</a>
+              <div class="text-[11px] text-ink-500 mt-1 font-mono flex items-center gap-2 flex-wrap">
+                <span>{{ a.domain or '—' }}</span>
+                {% if a.adverse_score %}<span class="text-amber-700">· adverse {{ a.adverse_score }}</span>{% endif %}
+                <span class="text-ink-300">·</span>
+                <span>{{ a.source }}</span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-[14px] text-ink-500">No matching news in the last 24 months.</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">sources: {{ news.sources_used|join(', ') if news.sources_used else 'none reachable' }}</div>
+    </section>
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-forest-800"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">03 · ACTIVE LITIGATION</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if litigation %}bg-red-100 text-red-700{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {{ litigation|length }} case{% if litigation|length != 1 %}s{% endif %}
+        </div>
+      </div>
+      {% if litigation %}
+        <ul class="space-y-4 text-[14px]">
+          {% for c in litigation %}
+            <li>
+              <a href="{{ c.url }}" target="_blank" rel="noopener" class="text-ink-900 hover:text-forest-800 hover:underline font-medium leading-snug block">{{ c.title }}</a>
+              <div class="text-[11px] text-ink-500 mt-1 font-mono">{{ c.court }} · {{ c.year }} · {{ c.status }}{% if c.inferred %} · <span class="text-amber-700">inferred</span>{% endif %}</div>
+              {% if c.summary %}<div class="text-[13px] text-ink-700 mt-2 leading-relaxed">{{ c.summary }}</div>{% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-[14px] text-ink-500">No matching cases in the registry or news inference.</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">source: Sabin Center Climate Case Chart + curated ledger + inference</div>
+    </section>
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full bg-forest-800"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">04 · NGO · INVESTIGATIVE</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if ngo %}bg-amber-100 text-amber-800{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {{ ngo|length }} signal{% if ngo|length != 1 %}s{% endif %}
+        </div>
+      </div>
+      {% if ngo %}
+        <ul class="space-y-4 text-[14px]">
+          {% for n in ngo %}
+            <li>
+              <a href="{{ n.url }}" target="_blank" rel="noopener" class="text-ink-900 hover:text-forest-800 hover:underline font-medium leading-snug block">{{ n.headline }}</a>
+              <div class="text-[11px] text-ink-500 mt-1 font-mono">{{ n.org }} · {{ n.year }}{% if n.inferred %} · <span class="text-amber-700">inferred from news</span>{% endif %}</div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <div class="text-[14px] text-ink-500">No NGO signals matched in the ledger or news inference.</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">source: curated ledger (Carbon Market Watch, Survival Intl, Forest Peoples, Mongabay) + inference</div>
+    </section>
+  </div>
+
+  <!-- ESG band header — separates Social-license signals (above) from E + G + FPIC signals (below). -->
+  <div class="bg-forest-900 text-white px-8 py-4 flex items-center justify-between">
+    <div class="flex items-center gap-3">
+      <div class="w-1.5 h-1.5 rounded-full bg-lime-500 pulse-dot"></div>
+      <div class="eyebrow text-[11px] font-semibold text-lime-500">ESG PILLAR · E + G + FPIC</div>
+      <div class="text-[13px] text-white/80">Environmental, Governance, and the FPIC procedural checklist — layered on the four social-license signals above.</div>
+    </div>
+    <div class="hidden md:block text-[11px] font-mono text-white/50">v0.3</div>
+  </div>
+
+  <!-- E + G panels -->
+  <div class="grid grid-cols-1 md:grid-cols-2 gap-px bg-ink-100">
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full {% if env.color == 'red' %}bg-red-500{% elif env.color == 'amber' %}bg-amber-500{% else %}bg-forest-800{% endif %}"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">05 · ENVIRONMENTAL · FOREST-COVER TREND</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if env.color == 'red' %}bg-red-100 text-red-700{% elif env.color == 'amber' %}bg-amber-100 text-amber-800{% elif env.color == 'green' %}bg-sage-100 text-forest-800{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {% if env.band %}{{ env.band }}{% else %}no data{% endif %}
+        </div>
+      </div>
+      {% if env.ok and env.annual_change_pp is not none %}
+        <div class="text-[14px] text-ink-900 leading-relaxed">
+          <span class="font-semibold">{{ env.country }}</span> forest cover went from
+          <span class="font-mono">{{ env.start_pct }}%</span> in {{ env.start_year }} to
+          <span class="font-mono">{{ env.end_pct }}%</span> in {{ env.end_year }} —
+          an annual change of
+          <span class="font-mono {% if env.annual_change_pp < 0 %}text-red-700{% else %}text-forest-800{% endif %}">{{ env.annual_change_pp }} pp/yr</span>.
+        </div>
+        <div class="text-[12px] text-ink-500 mt-2">Country-level forest-cover trend is meta-context: it doesn't read the project itself, but it tells the analyst whether they're operating in a deforestation-active geography.</div>
+      {% else %}
+        <div class="text-[14px] text-ink-500">{% if env.note %}{{ env.note }}{% else %}World Bank data unavailable for this country.{% endif %}</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">source: World Bank — AG.LND.FRST.ZS</div>
+    </section>
+
+    <section class="bg-white p-7">
+      <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-2">
+          <div class="w-1.5 h-1.5 rounded-full {% if gov.color == 'red' %}bg-red-500{% elif gov.color == 'amber' %}bg-amber-500{% else %}bg-forest-800{% endif %}"></div>
+          <div class="eyebrow text-[10px] font-semibold text-ink-500">06 · GOVERNANCE · COUNTRY CPI</div>
+        </div>
+        <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if gov.color == 'red' %}bg-red-100 text-red-700{% elif gov.color == 'amber' %}bg-amber-100 text-amber-800{% elif gov.color == 'green' %}bg-sage-100 text-forest-800{% else %}bg-ink-100 text-ink-500{% endif %}">
+          {% if gov.cpi_score is not none %}CPI {{ gov.cpi_score }} / 100{% else %}no data{% endif %}
+        </div>
+      </div>
+      {% if gov.ok and gov.cpi_score is not none %}
+        <div class="text-[14px] text-ink-900 leading-relaxed">
+          <span class="font-semibold">{{ gov.country }}</span> scores
+          <span class="font-mono font-semibold">{{ gov.cpi_score }}/100</span> on Transparency International's CPI 2024 —
+          <span class="{% if gov.color == 'red' %}text-red-700{% elif gov.color == 'amber' %}text-amber-700{% else %}text-forest-800{% endif %}">{{ gov.band }}</span>.
+        </div>
+        <div class="text-[12px] text-ink-500 mt-2">Governance proxy at the country level. Low CPI raises the likelihood of opaque benefit-sharing, weak land tenure enforcement, and rent-seeking in the project chain.</div>
+      {% else %}
+        <div class="text-[14px] text-ink-500">{% if gov.note %}{{ gov.note }}{% else %}Country not in CPI subset.{% endif %}</div>
+      {% endif %}
+      <div class="text-[11px] text-ink-400 font-mono mt-5">source: Transparency International CPI 2024</div>
+    </section>
+  </div>
+
+  <!-- FPIC procedural checklist panel -->
+  {% if fpic %}
+  <section class="bg-white border-t hairline p-8">
+    <div class="flex items-center justify-between mb-5">
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full {% if fpic.color == 'red' %}bg-red-500{% elif fpic.color == 'amber' %}bg-amber-500{% else %}bg-forest-800{% endif %}"></div>
+        <div class="eyebrow text-[10px] font-semibold text-ink-500">07 · FPIC PROCEDURAL CHECKLIST</div>
+      </div>
+      <div class="text-[11px] font-mono px-2.5 py-1 rounded-full {% if fpic.color == 'red' %}bg-red-100 text-red-700{% elif fpic.color == 'amber' %}bg-amber-100 text-amber-800{% else %}bg-sage-100 text-forest-800{% endif %}">
+        {{ fpic.fails }} fail · {{ fpic.insufficient }} insufficient · {{ fpic.passes }} pass
+      </div>
+    </div>
+    <div class="text-[13px] text-ink-700 mb-5 max-w-3xl leading-relaxed">{{ fpic.label }}.</div>
+    <div class="grid sm:grid-cols-2 gap-3">
+      {% for c in fpic.checks %}
+      <div class="border hairline rounded-xl p-4
+        {% if c.status == 'fail' %}bg-red-50 border-red-100{% elif c.status == 'pass' %}bg-sage-50 border-sage-200{% elif c.status == 'insufficient' %}bg-amber-50 border-amber-100{% else %}bg-ink-100/30{% endif %}">
+        <div class="flex items-center justify-between mb-2">
+          <div class="text-[12px] font-semibold text-ink-900">{{ c.label }}</div>
+          <span class="text-[10px] font-mono uppercase tracking-wider px-2 py-0.5 rounded-full
+            {% if c.status == 'fail' %}bg-red-100 text-red-700{% elif c.status == 'pass' %}bg-sage-100 text-forest-800{% elif c.status == 'insufficient' %}bg-amber-100 text-amber-800{% else %}bg-ink-100 text-ink-500{% endif %}">{{ c.status }}</span>
+        </div>
+        <div class="text-[12px] text-ink-500 leading-relaxed">{{ c.rationale }}</div>
+        {% if c.evidence %}
+        <ul class="mt-2 text-[11px] text-ink-500 font-mono space-y-0.5">
+          {% for ev in c.evidence %}<li class="truncate">· {{ ev }}</li>{% endfor %}
+        </ul>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div class="text-[11px] text-ink-400 font-mono mt-5">anchors: {{ fpic.anchors|join(' · ') }}</div>
+  </section>
+  {% endif %}
+
+  <!-- IC memo synthesis -->
+  <section class="border-t hairline px-8 py-7 bg-sage-50">
+    <div class="flex items-center justify-between mb-4">
+      <div class="flex items-center gap-2">
+        <div class="w-1.5 h-1.5 rounded-full bg-forest-800"></div>
+        <div class="eyebrow text-[10px] font-semibold text-forest-800">IC-MEMO · ESG SAFEGUARDS SECTION</div>
+      </div>
+      <div class="flex items-center gap-3">
+        {% if note.warnings %}<span class="text-[10px] font-mono text-amber-700 bg-amber-50 ring-1 ring-amber-200 px-2 py-0.5 rounded-full">⚠ {{ note.warnings|length }} grounding flag{% if note.warnings|length != 1 %}s{% endif %}</span>{% endif %}
+        {% if note.model %}<div class="font-mono text-[11px] text-ink-400">{{ note.model }}</div>{% endif %}
+      </div>
+    </div>
+    <div class="prose prose-sm max-w-none text-ink-900 whitespace-pre-line leading-relaxed font-normal">{{ note.text }}</div>
+    {% if note.warnings %}
+    <div class="mt-4 pt-4 border-t hairline">
+      <div class="eyebrow text-[10px] font-semibold text-amber-700 mb-2">GROUNDING WARNINGS</div>
+      <ul class="text-[12px] text-ink-500 font-mono space-y-0.5">
+        {% for w in note.warnings %}<li>· {{ w }}</li>{% endfor %}
+      </ul>
+    </div>
+    {% endif %}
+  </section>
+
+</article>

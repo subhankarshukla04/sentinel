@@ -1,0 +1,60 @@
+{
+  "vcs-985": {
+    "litigation": [
+      {
+        "title": "Kichwa Indigenous Community of Puerto Franco v. CIMA & Peru",
+        "court": "Loreto Superior Court",
+        "year": 2020,
+        "status": "Ongoing",
+        "url": "https://climatecasechart.com/non-us-case/kichwa-indigenous-people-of-puerto-franco-v-peru-cima-and-others/",
+        "summary": "Kichwa community alleges they were excluded from carbon revenue and consent processes for the Cordillera Azul REDD+ project."
+      }
+    ],
+    "ngo_complaints": [
+      {
+        "org": "Forest Peoples Programme",
+        "year": 2022,
+        "headline": "Carbon offset project in Peru linked to Indigenous rights violations",
+        "url": "https://www.forestpeoples.org/en/cordillera-azul"
+      },
+      {
+        "org": "Carbon Market Watch",
+        "year": 2023,
+        "headline": "Cordillera Azul among projects flagged for FPIC concerns",
+        "url": "https://carbonmarketwatch.org/"
+      }
+    ]
+  },
+  "vcs-902": {
+    "litigation": [],
+    "ngo_complaints": [
+      {
+        "org": "Survival International",
+        "year": 2023,
+        "headline": "Kariba REDD+ accused of overstating emissions reductions",
+        "url": "https://www.survivalinternational.org/"
+      },
+      {
+        "org": "New Yorker / Follow-Up Investigations",
+        "year": 2023,
+        "headline": "South Pole exits Kariba project after over-crediting reports",
+        "url": "https://www.newyorker.com/news/the-weekend-essay/the-great-cash-for-carbon-hustle"
+      }
+    ]
+  },
+  "vcs-934": {
+    "litigation": [],
+    "ngo_complaints": [
+      {
+        "org": "Mongabay",
+        "year": 2024,
+        "headline": "Disney-backed Alto Mayo carbon project faces benefit-sharing disputes",
+        "url": "https://news.mongabay.com/"
+      }
+    ]
+  },
+  "vcs-1722": {
+    "litigation": [],
+    "ngo_complaints": []
+  }
+}
