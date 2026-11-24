@@ -7,7 +7,7 @@ suspiciously), retries idempotent GETs, and never raises out of the call site.
 import time
 import requests
 
-UA = "Sentinel-CarbonDD/0.2 (+https://github.com/qatalyst-interview-demo)"
+UA = "Sentinel-CarbonDD/0.2 (+https://github.com/subhankarshukla04/sentinel)"
 DEFAULT_TIMEOUT = 5.0
 
 

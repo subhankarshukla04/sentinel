@@ -83,7 +83,7 @@ Mix of: 4 known-controversial projects, 6 ad-hoc real projects not in the curate
 
 **5. Overpass is opt-in.** Real-world hit rate was 0/16 across the live battle and Overpass eats a 4-second budget per failed call. Default off; enable with `SENTINEL_USE_OVERPASS=1` once OSM tagging matures.
 
-**6. JSON API alongside the HTML route.** `POST /api/assess` returns the same intelligence as a structured payload — so this engine plugs straight into Qatalyst's existing project workspace as a "Safeguards" tab without a UI rewrite.
+**6. JSON API alongside the HTML route.** `POST /api/assess` returns the same intelligence as a structured payload — so this engine plugs straight into an existing project workspace as a "Safeguards" tab without a UI rewrite.
 
 ## Configuration
 
@@ -109,5 +109,5 @@ python scripts/fuzz_test.py             # 25-call adversarial fuzz
 1. **Curated ledger pipeline** — scheduled scraper for Carbon Market Watch + Forest Peoples Programme + Mongabay carbon vertical, weekly diff posted to a `data/known_risks.json` PR.
 2. **Multilingual GDELT priority** — currently GDELT is rate-limited from a single IP; production should use the GKG Big Query export.
 3. **Polygon-based Indigenous overlay** — bundle a GeoJSON of the top 50 Indigenous territories in carbon-project hotspots (Amazon, Congo, SE Asia) with local Shapely point-in-polygon checks.
-4. **Webhook into Qatalyst's project workspace** — assessment becomes a "Safeguards" tab on every existing project, re-screened weekly with diff alerts.
+4. **Webhook into a project workspace** — assessment becomes a "Safeguards" tab on every existing project, re-screened weekly with diff alerts.
 5. **Confidence layer** — separate from the verdict, expose how *strong* the evidence is so the analyst can prioritize where to dig.

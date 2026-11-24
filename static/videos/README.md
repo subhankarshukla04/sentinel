@@ -28,7 +28,7 @@ brew install ffmpeg   # one-time
 ffmpeg -i ~/Desktop/Screen\ Recording.mov \
   -vcodec libx264 -crf 26 -preset slow -movflags +faststart \
   -an -vf "scale=1280:-2" \
-  ~/Desktop/qatalyst-interview-demo/sentinel/static/videos/01-run-screen.mp4
+  sentinel/static/videos/01-run-screen.mp4
 ```
 
 The `-an` flag strips audio. The `-crf 26` keeps file size small without visible quality loss for a UI demo.
